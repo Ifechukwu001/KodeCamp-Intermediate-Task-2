@@ -95,3 +95,12 @@ class User(BaseModel):
 @app.post("/users")
 def users(profile: Annotated[User, Body(embed=True)]):
     return {"profile": profile}
+
+
+@app.post("/validate")
+def validate(
+    username: Annotated[
+        str, Query(min_length=5, max_length=10, pattern=r"^[a-zA-Z]{5}\w+$")
+    ],
+):
+    return {"username": username, "message": "Valid username"}
