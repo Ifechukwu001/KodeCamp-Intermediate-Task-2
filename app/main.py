@@ -1,5 +1,6 @@
 from typing import Annotated
-from fastapi import FastAPI, Query, Body
+from datetime import date
+from fastapi import FastAPI, Query, Path, Body
 from pydantic import BaseModel, EmailStr
 
 app = FastAPI()
@@ -104,3 +105,23 @@ def validate(
     ],
 ):
     return {"username": username, "message": "Valid username"}
+
+
+class Report(BaseModel):
+    title: str
+    content: str
+
+
+@app.post("/reports/{report_id}")
+def report(
+    report_id: Annotated[int, Path(ge=1)],
+    start_date: Annotated[date, Query()],
+    end_date: Annotated[date, Query()],
+    report: Annotated[Report, Body()],
+):
+    return {
+        "id": report_id,
+        "start_date": start_date,
+        "end_date": end_date,
+        "report": report,
+    }
