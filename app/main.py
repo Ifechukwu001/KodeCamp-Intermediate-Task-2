@@ -1,5 +1,6 @@
 from typing import Annotated
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Body
+from pydantic import BaseModel, EmailStr
 
 app = FastAPI()
 
@@ -77,3 +78,20 @@ def search(
         "data": trimmed_data,
     }
     return result
+
+
+class Address(BaseModel):
+    street: str
+    city: str
+    zip: str
+
+
+class User(BaseModel):
+    name: str
+    email: EmailStr
+    address: Address
+
+
+@app.post("/users")
+def users(profile: Annotated[User, Body(embed=True)]):
+    return {"profile": profile}
